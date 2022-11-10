@@ -99,8 +99,6 @@ export default function Canvas({ imgUrl }: CanvasProps) {
                 const arr = [...reset];
                 arr.push(ctx.getImageData(0, 0, img.width, img.height));
                 setReset(arr);
-                console.log(document.body.clientHeight)
-                console.log(document.body.clientWidth);
                 setDragCavPos(pre => {
                     return {...pre,x:(document.body.clientWidth - img.width)/2,y:(document.body.clientHeight - img.width)/2}
                 })
@@ -117,7 +115,6 @@ export default function Canvas({ imgUrl }: CanvasProps) {
         })
         document.onkeydown = (e) => {
             if (e.key == 'Alt') setState('drag')
-
         }
         document.onkeyup = (e) => {
             console.log(e.key);
@@ -150,7 +147,6 @@ export default function Canvas({ imgUrl }: CanvasProps) {
         }
         return '#' + val.toString(16)
     }
-
     function magic(e: React.MouseEvent<HTMLDivElement, MouseEvent>){
         const time = new Date().getTime();
         const ctx = cav.current?.getContext('2d');
@@ -219,7 +215,8 @@ export default function Canvas({ imgUrl }: CanvasProps) {
                     console.error('ctx不存在')
                     return
                 }
-                ctx.strokeStyle = color
+                ctx.strokeStyle = color;
+                ctx.lineCap = 'round';
                 ctx.lineWidth = size * 2;
                 ctx.beginPath()
                 setCavIsDown(true);
@@ -230,8 +227,9 @@ export default function Canvas({ imgUrl }: CanvasProps) {
                 if (!ctx) return;
                 const { x, y } = drawPre;
                 ctx.moveTo(x, y);
-                ctx.arc(x, y, size, 0, Math.PI * 2);
+                // ctx.arc(x, y, size, 0, Math.PI * 2);
                 const [x2, y2] = [e.nativeEvent.offsetX, e.nativeEvent.offsetY];
+                // ctx.arc(x2, y2, size, 0, Math.PI * 2);
                 ctx.lineTo(x2, y2);
                 ctx.stroke();
                 // console.log(cav === cavc)
