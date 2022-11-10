@@ -8,8 +8,9 @@ class imgDataHandle{
         this.width = imgData.width
         this.height = imgData.height
     }
-    
-    changeRgba(x:number,y:number,rgba:string){
-        
+    //以1为起点
+    getPosXY(x:number,y:number){
+        let pos = x + (y - 1) * this.width - 1;
+        return pos * 4;
     }
 }

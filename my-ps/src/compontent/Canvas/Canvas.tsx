@@ -15,6 +15,10 @@ let drawPre = {
 }
 let fillstate = false;
 
+function getPosXY(x:number,y:number,width:number){
+    let pos = x + (y - 1) * width - 1;
+    return pos * 4;
+}
 
 export default function Canvas({ imgUrl }: CanvasProps) {
     const cav = useRef<HTMLCanvasElement>(null);
@@ -283,31 +287,29 @@ export default function Canvas({ imgUrl }: CanvasProps) {
         },
         ['fill']: {
             down: function (e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
-                console.log('down')
                 if (fillstate) return;
                 fillstate = true;
                 let time = new Date().getTime();
                 const ctx = cav.current?.getContext('2d') as CanvasRenderingContext2D;
                 const onePx = [parseInt(color.slice(1, 3), 16), parseInt(color.slice(3, 5), 16), parseInt(color.slice(5, 7), 16)]
                 let [x, y] = [e.nativeEvent.offsetX, e.nativeEvent.offsetY];
-                const curOnePx = ctx.getImageData(x, y, 1, 1).data;
-
+                const ImgData = ctx.getImageData(0,0,width,height);
+                const data = ImgData.data;
+                const targetPx = data.slice(getPosXY(x,y,width),getPosXY(x,y,width) + 4);
                 const dx = [0, 1, 0, -1];
                 const dy = [-1, 0, 1, 0];
                 const queue: any = [[x, y]];
                 const arr: boolean[][] = new Array(width + 1).fill([]).map(() => {
                     return new Array(height + 1).fill(false);
                 })
-                if (curOnePx[0] === onePx[0] && curOnePx[1] === onePx[1] && curOnePx[2] === onePx[2]) queue.shift();
+                if (targetPx[0] === onePx[0] && targetPx[1] === onePx[1] && targetPx[2] === onePx[2]) queue.shift();
                 while (queue.length) {
                     const [x, y] = queue.shift();
                     if (arr[x][y]) continue;
                     arr[x][y] = true;
-                    const Imgdata = ctx.getImageData(x, y, 1, 1);
-                    const data = Imgdata.data;
-                    if (curOnePx[0] === data[0] && curOnePx[1] === data[1] && curOnePx[2] === data[2]) {
-                        data[0] = onePx[0], data[1] = onePx[1], data[2] = onePx[2];
-                        ctx.putImageData(Imgdata, x, y);
+                    let curPos = getPosXY(x,y,width);
+                    if (targetPx[0] === data[curPos] && targetPx[1] === data[curPos + 1] && targetPx[2] === data[curPos + 2]) {
+                        data[curPos] = onePx[0], data[curPos + 1] = onePx[1], data[curPos + 2] = onePx[2];
                         for (let i = 0; i < 4; i++) {
                             const x1 = x + dx[i], y1 = y + dy[i];
                             if (x1 < 1 || x1 > width || y1 < 1 || y1 > height) continue;
@@ -315,6 +317,7 @@ export default function Canvas({ imgUrl }: CanvasProps) {
                         }
                     }
                 }
+                ctx.putImageData(ImgData,0,0);
                 onreset();
                 console.log('fillTime', new Date().getTime() - time);
                 fillstate = false
