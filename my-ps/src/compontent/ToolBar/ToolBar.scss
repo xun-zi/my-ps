@@ -1,0 +1,21 @@
+.ToolBar {
+    padding: 30px 20px;
+    position: absolute;
+    left: 150px;
+    top: 200px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    box-shadow: 0 10px 10px rgb(0 0 0 / 20%);
+
+    .El {
+        margin-top: 10px;
+        padding: 7px;
+        background-color: white;
+        font-size: 24px;
+        cursor: pointer;
+        &:hover {
+            background-color: rgb(200, 200, 200);
+        }
+    }
+}

@@ -1,0 +1,19 @@
+.Upload{
+    width: 700px;
+    height: 400px;
+    position: absolute;
+    left: 50%;
+    top:50%;
+    transform: translate(-50%,-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: rgb(51, 47, 47)  2px;
+    border-style: dashed;
+    &::before{
+        content: '可拖拽';
+        position: absolute;
+        top:0;
+        font-size: 20px;
+    }
+}
